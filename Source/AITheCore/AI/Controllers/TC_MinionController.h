@@ -12,6 +12,7 @@ class AITHECORE_API ATC_MinionController : public ATC_AIControllerBase
 public:
 	AActor* GetCurrentTarget() const;
 	void SetCurrentTarget(AActor* Target);
+	float PlayAttackAnimation() const;
 
 protected:
 	UPROPERTY()

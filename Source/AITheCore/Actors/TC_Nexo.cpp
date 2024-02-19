@@ -29,9 +29,16 @@ void ATC_Nexo::BeginPlay()
 	}
 
 	SpawnedActor->SpawnDefaultController();
+	SpawnedActor->Team = Team;
+	
 	if (ATC_MinionController* MinionController = Cast<ATC_MinionController>(SpawnedActor->GetController()))
 	{
 		MinionController->SetCurrentTarget(MainTarget);
 		MinionController->ChangeFSMState("GoToTarget");
 	}
+}
+
+FGenericTeamId ATC_Nexo::GetGenericTeamId() const
+{
+	return FGenericTeamId(static_cast<uint8>(Team));
 }

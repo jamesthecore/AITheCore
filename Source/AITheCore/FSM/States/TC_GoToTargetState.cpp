@@ -4,9 +4,18 @@
 void UTC_GoToTargetState::EnterState()
 {
 	Super::EnterState();
-
 	if (ATC_MinionController* MinionController = Cast<ATC_MinionController>(GetOwnerController()))
 	{
 		MinionController->MoveToActor(MinionController->GetCurrentTarget());
 	}
+}
+
+void UTC_GoToTargetState::ExitState()
+{
+	if (ATC_MinionController* MinionController = Cast<ATC_MinionController>(GetOwnerController()))
+	{
+		MinionController->StopMovement();
+	}
+
+	Super::ExitState();
 }
