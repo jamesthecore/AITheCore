@@ -3,11 +3,14 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/TC_AICharacterBase.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISense_Sight.h"
 
 ATC_AIControllerBase::ATC_AIControllerBase()
 {
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
+	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 }
 
 float ATC_AIControllerBase::PlayBreakAnimation(int32 Index) const
@@ -22,6 +25,17 @@ int32 ATC_AIControllerBase::GetIdleBreakAnimationsNum() const
 	return CharacterBase ? CharacterBase->GetIdleBreakersNum() : 0;
 }
 
+void ATC_AIControllerBase::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	const bool bStimulusDetected = Stimulus.WasSuccessfullySensed();
+	const bool bSightStimulus = IsStimulusOfTypeDetected<UAISense_Sight>(Stimulus);
+
+	if (bSightStimulus)
+	{
+		BlackboardComponent->SetValueAsObject("Player", bStimulusDetected ? Actor : nullptr);
+	}
+}
+
 void ATC_AIControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -31,5 +45,10 @@ void ATC_AIControllerBase::OnPossess(APawn* InPawn)
 		BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 		BehaviorTreeComponent->StartTree(*BehaviorTree);
 		BlackboardComponent->SetValueAsInt("IdleBreakerIndex", -1);
+	}
+
+	if (PerceptionComponent)
+	{
+		PerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ATC_AIControllerBase::OnTargetPerceptionUpdated);
 	}
 }
