@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Perception/AISense_Hearing.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -69,6 +70,12 @@ void AAITheCoreBTCharacter::BeginPlay()
 	}
 }
 
+void AAITheCoreBTCharacter::MakeMyNoise(const FInputActionValue& InputActionValue)
+{
+	MakeNoise(1.f, this, GetActorLocation());
+	//UAISense_Hearing::ReportNoiseEvent(this, GetActorLocation(), 1.f, this)
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -86,6 +93,8 @@ void AAITheCoreBTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAITheCoreBTCharacter::Look);
+
+		EnhancedInputComponent->BindAction(MakeNoiseAction, ETriggerEvent::Completed, this, &AAITheCoreBTCharacter::MakeMyNoise);
 	}
 	else
 	{

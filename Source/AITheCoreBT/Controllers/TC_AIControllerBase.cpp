@@ -3,7 +3,9 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/TC_AICharacterBase.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
 
 ATC_AIControllerBase::ATC_AIControllerBase()
@@ -29,10 +31,16 @@ void ATC_AIControllerBase::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	const bool bStimulusDetected = Stimulus.WasSuccessfullySensed();
 	const bool bSightStimulus = IsStimulusOfTypeDetected<UAISense_Sight>(Stimulus);
+	const bool bHearingStimulus = IsStimulusOfTypeDetected<UAISense_Hearing>(Stimulus);
 
 	if (bSightStimulus)
 	{
-		BlackboardComponent->SetValueAsObject("Player", bStimulusDetected ? Actor : nullptr);
+		BlackboardComponent->SetValueAsObject("PlayerAggro", bStimulusDetected ? Actor : nullptr);
+	}
+
+	if (bHearingStimulus)
+	{
+		BlackboardComponent->SetValueAsVector("HearingLocation", bStimulusDetected ? Stimulus.StimulusLocation : FVector());
 	}
 }
 
