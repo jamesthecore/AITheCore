@@ -6,6 +6,7 @@
 #include "Perception/AISense.h"
 #include "TC_AIControllerBase.generated.h"
 
+enum class ETC_AnimationType;
 class UBehaviorTreeComponent;
 
 UCLASS()
@@ -14,9 +15,12 @@ class AITHECOREBT_API ATC_AIControllerBase : public AAIController
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintPure)
+		const AActor* GetPlayer() const;
+
 	ATC_AIControllerBase();
-	float PlayBreakAnimation(int32 Index) const;
-	int32 GetIdleBreakAnimationsNum() const;
+	float PlayAnimationOfType(ETC_AnimationType Type, int32 Index) const;
+	int32 GetAnimationOfTypeNum(ETC_AnimationType Type) const;
 
 protected:
 	UPROPERTY()

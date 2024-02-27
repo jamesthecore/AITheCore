@@ -3,10 +3,15 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/TC_AICharacterBase.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
+
+const AActor* ATC_AIControllerBase::GetPlayer() const
+{
+	const AActor* Player = BlackboardComponent ? Cast<AActor>(BlackboardComponent->GetValueAsObject("Player")) : nullptr;
+	return Player;
+}
 
 ATC_AIControllerBase::ATC_AIControllerBase()
 {
@@ -15,16 +20,16 @@ ATC_AIControllerBase::ATC_AIControllerBase()
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 }
 
-float ATC_AIControllerBase::PlayBreakAnimation(int32 Index) const
+float ATC_AIControllerBase::PlayAnimationOfType(ETC_AnimationType Type, int32 Index) const
 {
 	ATC_AICharacterBase* CharacterBase = Cast<ATC_AICharacterBase>(GetPawn());
-	return CharacterBase ? CharacterBase->PlayBreakAnimation(Index) : -1.f;
+	return CharacterBase ? CharacterBase->PlayAnimationOfType(Type, Index) : -1.f;
 }
 
-int32 ATC_AIControllerBase::GetIdleBreakAnimationsNum() const
+int32 ATC_AIControllerBase::GetAnimationOfTypeNum(ETC_AnimationType Type) const
 {
 	const ATC_AICharacterBase* CharacterBase = Cast<ATC_AICharacterBase>(GetPawn());
-	return CharacterBase ? CharacterBase->GetIdleBreakersNum() : 0;
+	return CharacterBase ? CharacterBase->GetAnimationOfTypeNum(Type) : 0;
 }
 
 void ATC_AIControllerBase::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -35,7 +40,7 @@ void ATC_AIControllerBase::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 
 	if (bSightStimulus)
 	{
-		BlackboardComponent->SetValueAsObject("PlayerAggro", bStimulusDetected ? Actor : nullptr);
+		BlackboardComponent->SetValueAsObject("Player", bStimulusDetected ? Actor : nullptr);
 	}
 
 	if (bHearingStimulus)

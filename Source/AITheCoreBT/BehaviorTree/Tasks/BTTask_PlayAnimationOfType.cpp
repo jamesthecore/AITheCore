@@ -1,14 +1,15 @@
-#include "BehaviorTree/Tasks/BTTask_PlayIdleBreaker.h"
+#include "BehaviorTree/Tasks/BTTask_PlayAnimationOfType.h"
 
+#include "AITheCoreBT.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Controllers/TC_AIControllerBase.h"
 
-UBTTask_PlayIdleBreaker::UBTTask_PlayIdleBreaker()
+UBTTask_PlayAnimationOfType::UBTTask_PlayAnimationOfType()
 {
 	bCreateNodeInstance = true;
 }
 
-EBTNodeResult::Type UBTTask_PlayIdleBreaker::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_PlayAnimationOfType::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	const UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	const ATC_AIControllerBase* ControllerBase = Cast<ATC_AIControllerBase>(OwnerComp.GetAIOwner());
@@ -16,14 +17,14 @@ EBTNodeResult::Type UBTTask_PlayIdleBreaker::ExecuteTask(UBehaviorTreeComponent&
 	if (!BlackboardComponent || !ControllerBase)
 		return EBTNodeResult::Failed;
 
-	const int32 BreakIndex = BlackboardComponent->GetValueAsInt(GetSelectedBlackboardKey());
-	const float AnimationTime = ControllerBase->PlayBreakAnimation(BreakIndex);
+	const int32 BreakIndex = bUseBlackboardKey ? BlackboardComponent->GetValueAsInt(GetSelectedBlackboardKey()) : 0;
+	const float AnimationTime = ControllerBase->PlayAnimationOfType(Type, BreakIndex);
 	BehaviorTreeComponent = &OwnerComp;
-	ControllerBase->GetWorldTimerManager().SetTimer(AnimationTimer, this, &UBTTask_PlayIdleBreaker::OnAnimationTimerFinished, AnimationTime);
+	ControllerBase->GetWorldTimerManager().SetTimer(AnimationTimer, this, &UBTTask_PlayAnimationOfType::OnAnimationTimerFinished, AnimationTime);
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_PlayIdleBreaker::OnAnimationTimerFinished()
+void UBTTask_PlayAnimationOfType::OnAnimationTimerFinished()
 {
 	UBlackboardComponent* BlackboardComponent = BehaviorTreeComponent ? BehaviorTreeComponent->GetBlackboardComponent() : nullptr;
 	if (!BlackboardComponent)

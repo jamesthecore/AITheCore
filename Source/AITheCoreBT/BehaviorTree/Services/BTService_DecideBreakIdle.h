@@ -5,6 +5,8 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_DecideBreakIdle.generated.h"
 
+enum class ETC_AnimationType;
+
 struct FTC_BreakIdleInfo
 {
 	int32 Index = INDEX_NONE;
@@ -21,6 +23,8 @@ public:
 protected:
 	UPROPERTY(EditAnywhere)
 		int32 Percentage = 100;
+	UPROPERTY(EditAnywhere)
+		ETC_AnimationType Type;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	//virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;

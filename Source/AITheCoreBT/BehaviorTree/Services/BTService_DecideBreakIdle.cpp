@@ -11,7 +11,7 @@ void UBTService_DecideBreakIdle::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 {
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	const ATC_AIControllerBase* Controller = Cast<ATC_AIControllerBase>(OwnerComp.GetAIOwner());
-	const int32 NumAnimations = Controller ? Controller->GetIdleBreakAnimationsNum() : 0;
+	const int32 NumAnimations = Controller ? Controller->GetAnimationOfTypeNum(Type) : 0;
 
 	if (!BlackboardComponent || NumAnimations == 0)
 		return;

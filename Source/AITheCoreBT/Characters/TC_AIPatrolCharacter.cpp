@@ -2,7 +2,7 @@
 
 #include "Components/SplineComponent.h"
 
-ATC_AIPatrolCharacter::ATC_AIPatrolCharacter()
+ATC_AIPatrolCharacter::ATC_AIPatrolCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
 	SplineComponent->SetupAttachment(RootComponent);

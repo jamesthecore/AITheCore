@@ -12,7 +12,7 @@ class AITHECOREBT_API ATC_AIPatrolCharacter : public ATC_AICharacterBase
 	GENERATED_BODY()
 
 public:
-	ATC_AIPatrolCharacter();
+	ATC_AIPatrolCharacter(const FObjectInitializer& ObjectInitializer);
 
 	const TArray<FVector>& GetSplinePoints() const;
 	void FillSplinePoints();

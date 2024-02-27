@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "TC_AICharacterBase.generated.h"
 
+enum class ETC_AnimationType;
 class UWidgetComponent;
 class UBehaviorTree;
 
@@ -13,11 +14,11 @@ class AITHECOREBT_API ATC_AICharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ATC_AICharacterBase();
+	ATC_AICharacterBase(const FObjectInitializer& ObjectInitializer);
 	UBehaviorTree* GetBehaviorTree() const;
 
-	int32 GetIdleBreakersNum() const;
-	float PlayBreakAnimation(int32 Index);
+	int32 GetAnimationOfTypeNum(ETC_AnimationType Type) const;
+	float PlayAnimationOfType(ETC_AnimationType Type, int32 Index);
 
 	void AddAggro(float AggroAmount);
 	void SetAggro(float NewAggro);
@@ -29,6 +30,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		TArray<UAnimMontage*> IdleBreakers;
 	UPROPERTY(EditDefaultsOnly)
+		TArray<UAnimMontage*> AttackAnimations;
+	UPROPERTY(EditDefaultsOnly)
 		UWidgetComponent* AggroWidgetComponent = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float MaxAggro = 1.f;
@@ -36,4 +39,7 @@ protected:
 		float Aggro = 0.f;
 
 	virtual void BeginPlay() override;
+
+private:
+	const TArray<UAnimMontage*>& GetAnimationsOfType(ETC_AnimationType Type) const;
 };

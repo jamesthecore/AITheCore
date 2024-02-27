@@ -1,5 +1,17 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
+
+UENUM(BlueprintType)
+enum class ETC_AnimationType
+{
+	IdleBreaker,
+	Attack
+};
+
+UENUM(BlueprintType)
+enum class ETC_MovementState
+{
+	Walking,
+	Running
+};

@@ -1,9 +1,12 @@
 #include "Characters/TC_AICharacterBase.h"
 
+#include "AITheCoreBT.h"
 #include "WidgetComponent.h"
+#include "Components/TC_AIMovementComponent.h"
 #include "UI/TC_WidgetAggro.h"
 
-ATC_AICharacterBase::ATC_AICharacterBase()
+ATC_AICharacterBase::ATC_AICharacterBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UTC_AIMovementComponent>("CharMoveComp"))
 {
 	AggroWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("AggroWidgetComponent"));
 	AggroWidgetComponent->SetupAttachment(RootComponent);
@@ -15,19 +18,25 @@ UBehaviorTree* ATC_AICharacterBase::GetBehaviorTree() const
 	return BehaviorTree;
 }
 
-int32 ATC_AICharacterBase::GetIdleBreakersNum() const
+int32 ATC_AICharacterBase::GetAnimationOfTypeNum(ETC_AnimationType Type) const
 {
-	return IdleBreakers.Num();
+	const TArray<UAnimMontage*>& Montages = GetAnimationsOfType(Type);
+	return Montages.Num();
 }
 
-float ATC_AICharacterBase::PlayBreakAnimation(int32 Index)
+float ATC_AICharacterBase::PlayAnimationOfType(ETC_AnimationType Type, int32 Index)
 {
-	UAnimMontage* AnimToPlay = Index < IdleBreakers.Num() ? IdleBreakers[Index] : nullptr;
+	const TArray<UAnimMontage*>& Montages = GetAnimationsOfType(Type);
+	if (Montages.IsEmpty())
+		return -1.f;
+
+	UAnimMontage* AnimToPlay = Index < Montages.Num() ? Montages[Index] : nullptr;
 	if (!AnimToPlay)
 		return -1.f;
 
 	PlayAnimMontage(AnimToPlay);
 	return AnimToPlay->GetPlayLength();
+	
 }
 
 void ATC_AICharacterBase::AddAggro(float AggroAmount)
@@ -53,4 +62,14 @@ void ATC_AICharacterBase::BeginPlay()
 	{
 		WidgetAggro->SetCharacterOwner(this);
 	}
+}
+
+const TArray<UAnimMontage*>& ATC_AICharacterBase::GetAnimationsOfType(ETC_AnimationType Type) const
+{
+	if (Type == ETC_AnimationType::Attack)
+	{
+		return AttackAnimations;
+	}
+
+	return IdleBreakers;
 }

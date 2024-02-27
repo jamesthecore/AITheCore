@@ -2,17 +2,23 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_PlayIdleBreaker.generated.h"
+#include "BTTask_PlayAnimationOfType.generated.h"
+
+enum class ETC_AnimationType;
 
 UCLASS()
-class AITHECOREBT_API UBTTask_PlayIdleBreaker : public UBTTask_BlackboardBase
+class AITHECOREBT_API UBTTask_PlayAnimationOfType : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
 public:
-	UBTTask_PlayIdleBreaker();
+	UBTTask_PlayAnimationOfType();
 
 protected:
+	UPROPERTY(EditAnywhere)
+		bool bUseBlackboardKey = true;
+	UPROPERTY(EditAnywhere)
+		ETC_AnimationType Type;
 	UPROPERTY()
 		UBehaviorTreeComponent* BehaviorTreeComponent = nullptr;
 
