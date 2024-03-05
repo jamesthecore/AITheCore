@@ -1,12 +1,14 @@
 #include "BehaviorTree/Tasks/BTTask_GetNextSplinePoint.h"
 
 #include "AIController.h"
+#include "Actors/SmartObjects/TC_PatrolSmartObject.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/TC_AIPatrolCharacter.h"
 
 UBTTask_GetNextSplinePoint::UBTTask_GetNextSplinePoint()
 {
 	NodeName = "Get Spline Point";
+	bCreateNodeInstance = true;
 }
 
 void UBTTask_GetNextSplinePoint::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
@@ -24,19 +26,20 @@ uint16 UBTTask_GetNextSplinePoint::GetInstanceMemorySize() const
 
 EBTNodeResult::Type UBTTask_GetNextSplinePoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FTC_SplinePointInfo* MyMemory = CastInstanceNodeMemory<FTC_SplinePointInfo>(NodeMemory);
-	if (!MyMemory)
-		return EBTNodeResult::Failed;
+	//FTC_SplinePointInfo* MyMemory = CastInstanceNodeMemory<FTC_SplinePointInfo>(NodeMemory);
+	//if (!MyMemory)
+	//	return EBTNodeResult::Failed;
 
 	const AAIController* Controller = Cast<AAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
-	const ATC_AIPatrolCharacter* PatrolCharacter = Controller ? Cast<ATC_AIPatrolCharacter>(Controller->GetPawn()) : nullptr;
+	const ATC_AICharacterBase* CharacterBase = Controller ? Cast<ATC_AICharacterBase>(Controller->GetPawn()) : nullptr;
+	const ATC_PatrolSmartObject* CurrentSmartObject = CharacterBase ? Cast<ATC_PatrolSmartObject>(CharacterBase->GetSmartObject()) : nullptr;
 
-	if (!BlackboardComponent || !PatrolCharacter)
+	if (!BlackboardComponent || !CurrentSmartObject)
 		return EBTNodeResult::Failed;
 
-	const TArray<FVector>& SplinePoints = PatrolCharacter->GetSplinePoints();
-	int32& Index = MyMemory->Index;
+	const TArray<FVector>& SplinePoints = CurrentSmartObject->GetSplinePoints();
+	//int32& Index = MyMemory->Index;
 
 	BlackboardComponent->SetValueAsVector(GetSelectedBlackboardKey(), SplinePoints[Index]);
 

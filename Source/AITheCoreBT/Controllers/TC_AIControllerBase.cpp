@@ -1,4 +1,6 @@
 #include "Controllers/TC_AIControllerBase.h"
+
+#include "Actors/SmartObjects/TC_SmartObject.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -30,6 +32,15 @@ int32 ATC_AIControllerBase::GetAnimationOfTypeNum(ETC_AnimationType Type) const
 {
 	const ATC_AICharacterBase* CharacterBase = Cast<ATC_AICharacterBase>(GetPawn());
 	return CharacterBase ? CharacterBase->GetAnimationOfTypeNum(Type) : 0;
+}
+
+void ATC_AIControllerBase::SetSubTree(const ATC_SmartObject* SmartObject)
+{
+	if (SmartObject)
+	{
+		const FGameplayTag SubTag;
+		BehaviorTreeComponent->SetDynamicSubtree(SubTag, SmartObject->GetSubTree());
+	}
 }
 
 void ATC_AIControllerBase::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -64,4 +75,14 @@ void ATC_AIControllerBase::OnPossess(APawn* InPawn)
 	{
 		PerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ATC_AIControllerBase::OnTargetPerceptionUpdated);
 	}
+}
+
+void ATC_AIControllerBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	const ATC_AICharacterBase* CharacterBase = Cast<ATC_AICharacterBase>(GetPawn());
+	const ATC_SmartObject* SmartObject = CharacterBase ? CharacterBase->GetSmartObject() : nullptr;
+	SetSubTree(SmartObject);
+
 }

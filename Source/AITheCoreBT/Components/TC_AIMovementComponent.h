@@ -12,7 +12,7 @@ class UTC_AIMovementComponent : public UCharacterMovementComponent
 	GENERATED_BODY()
 
 public:
-	float GetSpeedByType(ETC_MovementState MovementState);
+	float GetSpeedByType(ETC_MovementState aMovementState);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

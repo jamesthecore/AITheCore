@@ -16,6 +16,7 @@ class AITHECOREBT_API UBTTask_GetNextSplinePoint : public UBTTask_BlackboardBase
 
 public:
 	UBTTask_GetNextSplinePoint();
+	int32 Index = 0;
 
 protected:
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;

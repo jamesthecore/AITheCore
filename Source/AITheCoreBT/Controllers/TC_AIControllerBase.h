@@ -6,6 +6,7 @@
 #include "Perception/AISense.h"
 #include "TC_AIControllerBase.generated.h"
 
+class ATC_SmartObject;
 enum class ETC_AnimationType;
 class UBehaviorTreeComponent;
 
@@ -21,6 +22,7 @@ public:
 	ATC_AIControllerBase();
 	float PlayAnimationOfType(ETC_AnimationType Type, int32 Index) const;
 	int32 GetAnimationOfTypeNum(ETC_AnimationType Type) const;
+	void SetSubTree(const ATC_SmartObject* SmartObject);
 
 protected:
 	UPROPERTY()
@@ -32,6 +34,7 @@ protected:
 		void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void BeginPlay() override;
 
 private:
 	template<typename T>

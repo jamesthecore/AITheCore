@@ -54,6 +54,11 @@ float ATC_AICharacterBase::GetAggro() const
 	return Aggro;
 }
 
+ATC_SmartObject* ATC_AICharacterBase::GetSmartObject() const
+{
+	return SmartObject;
+}
+
 void ATC_AICharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

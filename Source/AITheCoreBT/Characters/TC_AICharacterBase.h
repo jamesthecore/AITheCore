@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "TC_AICharacterBase.generated.h"
 
+class ATC_SmartObject;
 enum class ETC_AnimationType;
 class UWidgetComponent;
 class UBehaviorTree;
@@ -24,6 +25,7 @@ public:
 	void SetAggro(float NewAggro);
 	float GetAggro() const;
 
+	ATC_SmartObject* GetSmartObject() const;
 protected:
 	UPROPERTY(EditDefaultsOnly)
 		UBehaviorTree* BehaviorTree = nullptr;
@@ -33,6 +35,8 @@ protected:
 		TArray<UAnimMontage*> AttackAnimations;
 	UPROPERTY(EditDefaultsOnly)
 		UWidgetComponent* AggroWidgetComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+		ATC_SmartObject* SmartObject = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float MaxAggro = 1.f;
 	UPROPERTY(Transient, BlueprintReadWrite)
