@@ -6,6 +6,14 @@
 class UArrowComponent;
 class UBehaviorTree;
 
+UENUM(BlueprintType)
+enum class ETC_SmartObjectSlotType : uint8
+{
+	Free = 0,
+	Claimed,
+	Occupied
+};
+
 UCLASS()
 class ATC_SmartObject : public AActor
 {
@@ -14,6 +22,7 @@ class ATC_SmartObject : public AActor
 public:
 	ATC_SmartObject();
 	UBehaviorTree* GetSubTree() const;
+	ETC_SmartObjectSlotType* GetFreeSlot();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
@@ -22,4 +31,7 @@ protected:
 		UArrowComponent* ArrowComponent = nullptr;
 	UPROPERTY(EditAnywhere)
 		UBillboardComponent* BillboardComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+		TArray<ETC_SmartObjectSlotType> Slots;
+		
 };

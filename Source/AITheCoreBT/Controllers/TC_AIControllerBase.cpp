@@ -1,5 +1,6 @@
 #include "Controllers/TC_AIControllerBase.h"
 
+#include "Actors/SmartObjects/TC_PatrolSmartObject.h"
 #include "Actors/SmartObjects/TC_SmartObject.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -8,6 +9,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
+#include "Subsystem/TC_SmartObjectSubsystem.h"
 
 const AActor* ATC_AIControllerBase::GetPlayer() const
 {
@@ -83,6 +85,5 @@ void ATC_AIControllerBase::BeginPlay()
 
 	const ATC_AICharacterBase* CharacterBase = Cast<ATC_AICharacterBase>(GetPawn());
 	const ATC_SmartObject* SmartObject = CharacterBase ? CharacterBase->GetSmartObject() : nullptr;
-	SetSubTree(SmartObject);
-
+	SetSubTree(SmartObject);	
 }

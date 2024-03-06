@@ -32,8 +32,11 @@ EBTNodeResult::Type UBTTask_GetNextSplinePoint::ExecuteTask(UBehaviorTreeCompone
 
 	const AAIController* Controller = Cast<AAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	if (!BlackboardComponent)
+		return EBTNodeResult::Failed;
+
 	const ATC_AICharacterBase* CharacterBase = Controller ? Cast<ATC_AICharacterBase>(Controller->GetPawn()) : nullptr;
-	const ATC_PatrolSmartObject* CurrentSmartObject = CharacterBase ? Cast<ATC_PatrolSmartObject>(CharacterBase->GetSmartObject()) : nullptr;
+	const ATC_PatrolSmartObject* CurrentSmartObject = Cast<ATC_PatrolSmartObject>(BlackboardComponent->GetValueAsObject("SmartObject"));
 
 	if (!BlackboardComponent || !CurrentSmartObject)
 		return EBTNodeResult::Failed;

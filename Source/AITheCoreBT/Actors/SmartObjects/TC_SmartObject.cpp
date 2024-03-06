@@ -16,3 +16,13 @@ UBehaviorTree* ATC_SmartObject::GetSubTree() const
 {
 	return SubTree;
 }
+
+ETC_SmartObjectSlotType* ATC_SmartObject::GetFreeSlot()
+{
+	ETC_SmartObjectSlotType* SlotType = Slots.FindByPredicate([](const ETC_SmartObjectSlotType& SlotType)
+	{
+		return SlotType == ETC_SmartObjectSlotType::Free;
+	});
+
+	return SlotType;  
+}

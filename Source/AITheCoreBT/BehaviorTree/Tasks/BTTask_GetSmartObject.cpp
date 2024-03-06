@@ -2,9 +2,11 @@
 
 #include "AIController.h"
 #include "Actors/SmartObjects/TC_SmartObject.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/TC_AICharacterBase.h"
 #include "Controllers/TC_AIControllerBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Subsystem/TC_SmartObjectSubsystem.h"
 
 UBTTask_GetSmartObject::UBTTask_GetSmartObject()
 {
@@ -13,21 +15,29 @@ UBTTask_GetSmartObject::UBTTask_GetSmartObject()
 
 EBTNodeResult::Type UBTTask_GetSmartObject::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ATC_AIControllerBase* Controller = Cast<ATC_AIControllerBase>(OwnerComp.GetAIOwner());
-	ATC_AICharacterBase* Character = Controller ? Cast<ATC_AICharacterBase>(Controller->GetPawn()) : nullptr;
+	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	if (!BlackboardComponent)
+		return EBTNodeResult::Failed;
+
+	const ATC_AIControllerBase* Controller = Cast<ATC_AIControllerBase>(OwnerComp.GetAIOwner());
+	const ATC_AICharacterBase* Character = Controller ? Cast<ATC_AICharacterBase>(Controller->GetPawn()) : nullptr;
 
 	if (!Character)
 		return EBTNodeResult::Failed;
 
-	TArray<AActor*> Out;
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(Character->GetSmartObject());
-	DrawDebugSphere(GetWorld(), Character->GetActorLocation(), SphereRadius, 10, FColor::Red);
-	if (UKismetSystemLibrary::SphereOverlapActors(this, Character->GetActorLocation(), SphereRadius, ObjectTypes, ATC_SmartObject::StaticClass(), ActorsToIgnore, Out))
-	{
-		Controller->SetSubTree(Cast<ATC_SmartObject>(Out[FMath::RandRange(0, Out.Num() - 1)]));
-	}
+	UTC_SmartObjectSubsystem* SmartSubsystem = UTC_SmartObjectSubsystem::GetTCSmartObjectSubsystem(GetWorld());
+	if (!SmartSubsystem)
+		return EBTNodeResult::Failed;
+
+	TArray<ATC_SmartObject*> SmartObjects = SmartSubsystem->GetCloseSmartObjects(SphereRadius, Character->GetActorLocation());
+	if (SmartObjects.IsEmpty())
+		return EBTNodeResult::Failed;
+
+	const int32 RandIndex = FMath::RandRange(0, SmartObjects.Num() - 1);
+	ATC_SmartObject* Result = SmartObjects[RandIndex];
+
+	SmartSubsystem->ClaimSmartObject(Result);
+	BlackboardComponent->SetValueAsObject("SmartObject", Result);
+	
 	return EBTNodeResult::Succeeded;
 }

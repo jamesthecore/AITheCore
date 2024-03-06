@@ -27,7 +27,7 @@ public:
 
 	ATC_SmartObject* GetSmartObject() const;
 protected:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 		UBehaviorTree* BehaviorTree = nullptr;
 	UPROPERTY(EditDefaultsOnly)
 		TArray<UAnimMontage*> IdleBreakers;
